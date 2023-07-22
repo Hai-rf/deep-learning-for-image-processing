@@ -4,31 +4,45 @@ import torch.nn as nn
 from model import LeNet
 import torch.optim as optim
 import torchvision.transforms as transforms
+import matplotlib.pyplot as plt
+import numpy as np
 
+def imshow(img):
+    img = img / 2 + 0.5     # unnormalize
+    npimg = img.numpy()
+    plt.imshow(np.transpose(npimg, (1, 2, 0)))
+    plt.show()
 
 def main():
     transform = transforms.Compose(
         [transforms.ToTensor(),
          transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+    
+    val_batch_size = 5000
 
     # 50000张训练图片
     # 第一次使用时要将download设置为True才会自动去下载数据集
     train_set = torchvision.datasets.CIFAR10(root='./data', train=True,
                                              download=False, transform=transform)
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=36,
-                                               shuffle=True, num_workers=0)
+                                               shuffle=True, num_workers=4)
 
     # 10000张验证图片
     # 第一次使用时要将download设置为True才会自动去下载数据集
     val_set = torchvision.datasets.CIFAR10(root='./data', train=False,
                                            download=False, transform=transform)
-    val_loader = torch.utils.data.DataLoader(val_set, batch_size=5000,
+    val_loader = torch.utils.data.DataLoader(val_set, batch_size=val_batch_size,
                                              shuffle=False, num_workers=0)
     val_data_iter = iter(val_loader)
     val_image, val_label = next(val_data_iter)
     
-    # classes = ('plane', 'car', 'bird', 'cat',
-    #            'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
+    classes = ('plane', 'car', 'bird', 'cat',
+               'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
+    
+    # # show images
+    # imshow(torchvision.utils.make_grid(val_image))
+    # # print labels
+    # print(' '.join(f'{classes[val_label[j]]:5s}' for j in range(val_batch_size)))
 
     net = LeNet()
     loss_function = nn.CrossEntropyLoss()
@@ -69,3 +83,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+    
