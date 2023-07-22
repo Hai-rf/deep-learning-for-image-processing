@@ -1,6 +1,6 @@
 import torch.nn as nn
 import torch.nn.functional as F
-
+import torch
 
 class LeNet(nn.Module):
     def __init__(self):
@@ -25,3 +25,7 @@ class LeNet(nn.Module):
         return x
 
 
+# input1 = torch.rand([32, 3, 32, 32])
+# model = LeNet()
+# print(model)
+# output = model(input1)
